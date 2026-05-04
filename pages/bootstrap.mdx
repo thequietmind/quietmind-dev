@@ -155,3 +155,33 @@ For a full picture of what gets installed, see the [Brewfile](https://github.com
 
 - **`com.ezra.cleanup-downloads`** — runs `~/.bin/cleanup_downloads.sh` every 4 hours, also at login
 - **`com.ezra.cleanup-screenshots`** — runs `~/.bin/cleanup_screenshots.sh` every 4 hours, also at login
+
+## Post-Install
+
+After running this macOS bootstrap script, you should run the following commands.
+
+Set your name in your Git config.
+
+```sh
+git config --file ~/.config/gitconfig user.name "Your Name"
+```
+
+Set your email in your Git config.
+
+```sh
+git config --file ~/.config/gitconfig user.email "you@email.com"
+```
+
+Set the hostname of your system.
+
+```sh
+sudo scutil --set HostName "your-hostname"
+```
+
+```sh
+sudo scutil --set LocalHostName "your-hostname"
+```
+
+```sh
+sudo scutil --set ComputerName "your-hostname"
+```
