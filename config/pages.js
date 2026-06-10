@@ -6,6 +6,7 @@ const HomeMDX = lazy(() => import("@pages/home.mdx"));
 const BootstrapMDX = lazy(() => import("@pages/bootstrap.mdx"));
 const ZshCommands = lazy(() => import("@pages/zsh-commands.mdx"));
 const VSCodeConfiguration = lazy(() => import("@pages/vscode-configuration.mdx"));
+const ObsidianConfiguration = lazy(() => import("@pages/obsidian-configuration.mdx"));
 
 // Centralized pages configuration
 // This controls both navigation and routing
@@ -25,6 +26,11 @@ export const pages = [
     name: "VS Code Configuration",
     route: "/vscode-configuration",
     component: VSCodeConfiguration,
+  },
+  {
+    name: "Obsidian Configuration",
+    route: "/obsidian-configuration",
+    component: ObsidianConfiguration,
   },
   {
     name: "Zsh Commands",

@@ -1,0 +1,656 @@
+# Obsidian Configuration
+
+## Plugins
+
+- Dataview
+  - Run advanced queries over your vault
+- Templater
+  - Create and use dynamic templates
+- Tasks
+  - Track tasks across your vault
+- Home page
+  - Open a note, base, or workspace on startup
+- Beautitab
+  - Creates a customizable new tab page
+
+## Dataview
+
+Install the Dataview plugin.
+
+With Dataview installed, you can use built-in fields (that exist for every note) as well as any YAML frontmatter keys or inline fields you define yourself.
+
+The following are Dataview queries you can use in a page to list all the files in a directory and its subdirectories in a sortable and searchable table view.
+
+### Daily Notes
+
+~~~dart
+```dataviewjs
+// ---------- Config ----------
+const FOLDER_NAME = '"Daily Notes"';
+const SHOW_CREATED = false;
+const SHOW_MODIFIED = true;
+
+// Sort options:
+// "date"  = Name column / daily note date
+// "ctime" = Created
+// "mtime" = Modified
+const DEFAULT_SORT_KEY = "date";
+
+// Sort direction:
+// "asc" = oldest/smallest values at the top
+// "desc" = newest/largest values at the top
+const DEFAULT_SORT_DIR = "desc";
+
+// ---------- Data ----------
+const pages = dv.pages(FOLDER_NAME)
+	.array();
+
+function ordinal(n) {
+	const s = ["th", "st", "nd", "rd"];
+	const v = n % 100;
+	return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+const ALL = pages.map(p => {
+	const date = dv.date(p.file.name.split(" ")[0]);
+
+	const displayName =
+		`${date.toFormat("cccc")} · ${date.toFormat("LLLL")} ${ordinal(date.day)}`;
+
+	return {
+		name: p.file.name,
+		displayName,
+		path: p.file.path,
+		date,
+		ctime: p.file.ctime,
+		mtime: p.file.mtime
+	};
+});
+
+let rows = ALL.slice();
+
+// ---------- Helpers ----------
+const fmtDate = d => dv.date(d).toFormat("MMM dd, yyyy");
+
+const fmtDateTime = d =>
+	dv.date(d).toFormat("MMM dd, yyyy hh:mm a").replace(/AM|PM/, m => m.toLowerCase());
+
+// ---------- UI: search + count ----------
+const controls = dv.el("div", "", {
+	cls: "dv-controls",
+	attr: {
+		style: "display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem;"
+	}
+});
+
+const input = document.createElement("input");
+input.type = "search";
+input.placeholder = "Search filenames…";
+input.setAttribute("aria-label", "Search filenames");
+input.style.cssText = "flex:1 1 auto;padding:.4rem .6rem;border:1px solid var(--background-modifier-border);border-radius:6px;";
+
+const clearBtn = document.createElement("button");
+clearBtn.textContent = "Clear";
+clearBtn.style.cssText = "padding:.35rem .6rem;border:1px solid var(--background-modifier-border);border-radius:6px;background:var(--interactive-normal);cursor:pointer;";
+
+const count = document.createElement("div");
+count.style.cssText = "margin-left:auto;opacity:.8;";
+
+controls.appendChild(input);
+controls.appendChild(clearBtn);
+controls.appendChild(count);
+
+// ---------- Table skeleton ----------
+const table = dv.el("table", "", {
+	cls: "dv-sortable",
+	attr: {
+		style: "width:100%;"
+	}
+});
+
+const thead = table.createTHead();
+const headTr = thead.insertRow();
+const tbody = table.createTBody();
+
+const headers = [
+	{ key: "date", label: "Name", type: "date" },
+	...(SHOW_CREATED ? [{ key: "ctime", label: "Created", type: "date" }] : []),
+	...(SHOW_MODIFIED ? [{ key: "mtime", label: "Modified", type: "date" }] : [])
+];
+
+// ---------- Sort state ----------
+let sortKey = DEFAULT_SORT_KEY;
+let dir = DEFAULT_SORT_DIR === "desc" ? -1 : 1;
+
+function applyHeaderState() {
+	for (const th of headTr.cells) {
+		th.classList.remove("is-sorted", "asc", "desc");
+		th.setAttribute("aria-sort", "none");
+	}
+
+	const idx = headers.findIndex(h => h.key === sortKey);
+
+	if (idx >= 0) {
+		const th = headTr.cells[idx];
+		th.classList.add("is-sorted", dir === 1 ? "asc" : "desc");
+		th.setAttribute("aria-sort", dir === 1 ? "ascending" : "descending");
+	}
+}
+
+function sortRowsInPlace() {
+	if (!sortKey) return;
+
+	const h = headers.find(x => x.key === sortKey);
+
+	if (!h) return;
+
+	rows.sort((a, b) => {
+		const va = a[sortKey];
+		const vb = b[sortKey];
+
+		if (h.type === "string") {
+			return dir * String(va).localeCompare(String(vb), undefined, {
+				numeric: true,
+				sensitivity: "base"
+			});
+		}
+
+		return dir * (new Date(va) - new Date(vb));
+	});
+}
+
+function sortBy(key) {
+	if (sortKey === key) {
+		dir = -dir;
+	} else {
+		sortKey = key;
+		dir = 1;
+	}
+
+	sortRowsInPlace();
+	applyHeaderState();
+	renderBody();
+}
+
+// ---------- Header ----------
+for (const h of headers) {
+	const th = document.createElement("th");
+
+	const label = document.createElement("span");
+	label.textContent = h.label;
+	label.className = "th-label";
+
+	const icons = document.createElement("span");
+	icons.className = "sort-icons";
+
+	const up = document.createElement("span");
+	up.className = "up";
+	up.textContent = "▲";
+
+	const dn = document.createElement("span");
+	dn.className = "down";
+	dn.textContent = "▼";
+
+	icons.appendChild(up);
+	icons.appendChild(dn);
+
+	const wrap = document.createElement("span");
+	wrap.className = "th-wrap";
+	wrap.appendChild(label);
+	wrap.appendChild(icons);
+
+	th.appendChild(wrap);
+	th.addEventListener("click", () => sortBy(h.key));
+	headTr.appendChild(th);
+}
+
+// ---------- Render ----------
+function renderBody() {
+	tbody.innerHTML = "";
+
+	if (rows.length === 0) {
+		const tr = tbody.insertRow();
+		const td = tr.insertCell();
+
+		td.colSpan = headers.length;
+		td.style.opacity = ".7";
+		td.textContent = "No matches.";
+
+		count.textContent = "0 items";
+		return;
+	}
+
+	for (const r of rows) {
+		const tr = tbody.insertRow();
+
+		const tdName = tr.insertCell();
+		const a = document.createElement("a");
+
+		a.className = "internal-link";
+		a.href = r.path;
+		a.setAttribute("data-href", r.path);
+		a.textContent = r.displayName;
+
+		tdName.appendChild(a);
+
+		for (const h of headers.slice(1)) {
+			if (h.key === "ctime") {
+				tr.insertCell().textContent = fmtDate(r.ctime);
+			}
+
+			if (h.key === "mtime") {
+				tr.insertCell().textContent = fmtDateTime(r.mtime);
+			}
+		}
+	}
+
+	count.textContent = `${rows.length} item${rows.length === 1 ? "" : "s"}`;
+}
+
+// ---------- Filter ----------
+function applyFilter(q) {
+	const query = q.trim().toLowerCase();
+
+	rows = query
+		? ALL.filter(r => r.name.toLowerCase().includes(query))
+		: ALL.slice();
+
+	sortRowsInPlace();
+	renderBody();
+}
+
+// Wire up search
+let t = null;
+
+input.addEventListener("input", e => {
+	clearTimeout(t);
+	t = setTimeout(() => applyFilter(e.target.value), 120);
+});
+
+clearBtn.addEventListener("click", () => {
+	input.value = "";
+	applyFilter("");
+	input.focus();
+});
+
+input.addEventListener("keydown", e => {
+	if (e.key === "Escape") clearBtn.click();
+});
+
+// ---------- Initial render ----------
+sortRowsInPlace();
+applyHeaderState();
+renderBody();
+```
+~~~
+
+### Markdown Files
+
+~~~dart
+```dataviewjs
+// ---------- Data ----------
+const pages = dv.pages('"Wiki"')
+  .where(p => !p.file.folder.includes("/"))
+  .array();
+
+const ALL = pages.map(p => ({
+  name:  p.file.name,
+  path:  p.file.path,
+  ctime: p.file.ctime,
+  mtime: p.file.mtime
+}));
+
+let rows = ALL.slice(); // filtered view
+
+// ---------- Helpers ----------
+const fmtDate = d => dv.date(d).toFormat("MMM dd, yyyy");
+const fmtDateTime = d =>
+  dv.date(d).toFormat("MMM dd, yyyy hh:mm a").replace(/AM|PM/, m => m.toLowerCase());
+
+// ---------- UI: search + count ----------
+const controls = dv.el("div", "", { cls: "dv-controls", attr: { style: "display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem;" } });
+
+const input = document.createElement("input");
+input.type = "search";
+input.placeholder = "Search filenames…";
+input.setAttribute("aria-label", "Search filenames");
+input.style.cssText = "flex:1 1 auto;padding:.4rem .6rem;border:1px solid var(--background-modifier-border);border-radius:6px;";
+
+const clearBtn = document.createElement("button");
+clearBtn.textContent = "Clear";
+clearBtn.style.cssText = "padding:.35rem .6rem;border:1px solid var(--background-modifier-border);border-radius:6px;background:var(--interactive-normal);cursor:pointer;";
+
+const count = document.createElement("div");
+count.style.cssText = "margin-left:auto;opacity:.8;";
+
+controls.appendChild(input);
+controls.appendChild(clearBtn);
+controls.appendChild(count);
+
+// ---------- Table skeleton ----------
+const table  = dv.el("table", "", { cls: "dv-sortable", attr: { style: "width:100%;" } });
+const thead  = table.createTHead();
+const headTr = thead.insertRow();
+const tbody  = table.createTBody();
+
+const headers = [
+  { key: "name",  label: "Name",     type: "string" },
+  { key: "ctime", label: "Created",  type: "date"   },
+  { key: "mtime", label: "Modified", type: "date"   }
+];
+
+// ---------- Sort state ----------
+let sortKey = null;  // first call sets ASC
+let dir = 1;         // 1 asc, -1 desc
+
+function applyHeaderState() {
+  for (const th of headTr.cells) {
+    th.classList.remove("is-sorted", "asc", "desc");
+    th.setAttribute("aria-sort", "none");
+  }
+  const idx = headers.findIndex(h => h.key === sortKey);
+  if (idx >= 0) {
+    const th = headTr.cells[idx];
+    th.classList.add("is-sorted", dir === 1 ? "asc" : "desc");
+    th.setAttribute("aria-sort", dir === 1 ? "ascending" : "descending");
+  }
+}
+
+function sortRowsInPlace() {
+  if (!sortKey) return;
+  const h = headers.find(x => x.key === sortKey);
+  rows.sort((a, b) => {
+    const va = a[sortKey], vb = b[sortKey];
+    if (h.type === "string") {
+      return dir * String(va).localeCompare(String(vb), undefined, { numeric: true, sensitivity: "base" });
+    } else {
+      return dir * (new Date(va) - new Date(vb));
+    }
+  });
+}
+
+function sortBy(key) {
+  if (sortKey === key) {
+    dir = -dir;
+  } else {
+    sortKey = key;
+    dir = 1;
+  }
+  sortRowsInPlace();
+  applyHeaderState();
+  renderBody();
+}
+
+// ---------- Header ----------
+for (const h of headers) {
+  const th = document.createElement("th");
+  const label = document.createElement("span");
+  label.textContent = h.label;
+  label.className = "th-label";
+  const icons = document.createElement("span");
+  icons.className = "sort-icons";
+  const up = document.createElement("span"); up.className = "up";   up.textContent = "▲";
+  const dn = document.createElement("span"); dn.className = "down"; dn.textContent = "▼";
+  icons.appendChild(up); icons.appendChild(dn);
+  const wrap = document.createElement("span");
+  wrap.className = "th-wrap";
+  wrap.appendChild(label); wrap.appendChild(icons);
+  th.appendChild(wrap);
+  th.addEventListener("click", () => sortBy(h.key));
+  headTr.appendChild(th);
+}
+
+// ---------- Render ----------
+function renderBody() {
+  tbody.innerHTML = "";
+  if (rows.length === 0) {
+    const tr = tbody.insertRow();
+    const td = tr.insertCell();
+    td.colSpan = headers.length;
+    td.style.opacity = ".7";
+    td.textContent = "No matches.";
+    count.textContent = "0 items";
+    return;
+  }
+  for (const r of rows) {
+    const tr = tbody.insertRow();
+    const tdName = tr.insertCell();
+    const a = document.createElement("a");
+    a.className = "internal-link";
+    a.href = r.path;
+    a.setAttribute("data-href", r.path);
+    a.textContent = r.name;
+    tdName.appendChild(a);
+    tr.insertCell().textContent = fmtDate(r.ctime);
+    tr.insertCell().textContent = fmtDateTime(r.mtime);
+  }
+  count.textContent = `${rows.length} item${rows.length === 1 ? "" : "s"}`;
+}
+
+// ---------- Filter ----------
+function applyFilter(q) {
+  const query = q.trim().toLowerCase();
+  rows = query ? ALL.filter(r => r.name.toLowerCase().includes(query)) : ALL.slice();
+  sortRowsInPlace();
+  renderBody();
+}
+
+// Wire up search (debounced)
+let t = null;
+input.addEventListener("input", (e) => {
+  clearTimeout(t);
+  t = setTimeout(() => applyFilter(e.target.value), 120);
+});
+clearBtn.addEventListener("click", () => {
+  input.value = "";
+  applyFilter("");
+  input.focus();
+});
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") clearBtn.click();
+});
+
+// ---------- Initial render (Name ASC) ----------
+sortBy("name");
+```
+~~~
+
+## CSS Snippets
+
+To create CSS Snippets, create a `.css` file in `<your vault>/.obsidian/snippets/`.
+
+> You can quickly open this directory with the folder button in `Settings > Appearance > CSS Snippets`.
+
+### code-blocks.css
+
+Add custom styles to fenced code blocks and inline code blocks.
+
+```css
+/* =========================
+   INLINE CODE
+   ========================= */
+
+.markdown-rendered :not(pre) > code,
+.cm-inline-code {
+  background-color: #1a1a1a !important;
+  color: inherit !important;
+
+  border: 1px solid #333;
+  border-radius: 4px;
+
+  padding: 0.12em 0.35em;
+  font-weight: 500;
+}
+
+/* =========================
+   READING MODE CODE BLOCKS
+   ========================= */
+
+.markdown-rendered pre {
+  background-color: #111 !important;
+
+  border: 1px solid #333;
+  border-radius: 8px;
+
+  padding: 12px;
+}
+
+.markdown-rendered pre code {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  color: inherit !important;
+}
+
+/* =========================
+   LIVE PREVIEW CODE BLOCKS
+   ========================= */
+
+/* Code lines */
+.cm-editor .HyperMD-codeblock {
+  background-color: #111 !important;
+}
+
+/* Entire block gets a subtle gutter */
+.cm-editor .cm-line.HyperMD-codeblock {
+  border-left: 2px solid #444;
+  padding-left: 12px;
+}
+
+/* Opening and closing ``` fences */
+.cm-editor .HyperMD-codeblock-begin,
+.cm-editor .HyperMD-codeblock-end {
+  background-color: #0f0f0f;
+  color: #888 !important;
+
+  border-left: 2px solid #444;
+  padding-left: 12px;
+}
+
+/* Rounded top */
+.cm-editor .HyperMD-codeblock-begin {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Rounded bottom */
+.cm-editor .HyperMD-codeblock-end {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+```
+
+### kbd.css
+
+Add custom styles to `<kbd>` elements.
+
+```css
+kbd {
+  background-color: var(--background-primary-alt); /* uses your theme’s background */
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 0 var(--background-modifier-border);
+  padding: 2px 6px;
+  font-size: 0.85em;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, "Liberation Mono", monospace;
+  margin: 0 2px;
+}
+```
+
+### table.css
+
+Add custom styles to `<table>` elements.
+
+```css
+table.dv-sortable {
+  width: 100% !important;
+}
+table.dv-sortable, table.dv-sortable th, table.dv-sortable td {
+  border: 0 !important;
+  border-collapse: collapse !important;
+}
+table.dv-sortable th {
+  border-bottom: 2px solid #ddd !important;
+}
+
+/* Fill width + tidy base */
+table.dv-sortable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.dv-sortable td {
+  padding: 0.25rem 0.5rem;
+}
+
+/* Header cells: normal table layout */
+table.dv-sortable th {
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Inner wrapper: label left, arrows right */
+table.dv-sortable th .th-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  /* space between label and icon stack */
+}
+
+/* Arrow stack */
+table.dv-sortable th .sort-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  /* exact space between ▲ and ▼ */
+  color: var(--text-muted);
+  line-height: 1;
+  /* normalize container line-height */
+}
+
+/* Arrows: remove baseline/leading quirks */
+table.dv-sortable th .sort-icons .up,
+table.dv-sortable th .sort-icons .down {
+  display: block;
+  /* no inline baseline spacing */
+  font-size: 0.72em;
+  line-height: 0.75;
+  /* tight */
+  margin: 0;
+  padding: 0;
+  opacity: 0.45;
+  /* muted by default */
+}
+
+/* Hover hint (optional) */
+table.dv-sortable th:hover .sort-icons .up,
+table.dv-sortable th:hover .sort-icons .down {
+  opacity: 0.6;
+}
+
+/* Active column: brighten just the active direction */
+table.dv-sortable th.is-sorted .sort-icons .up,
+table.dv-sortable th.is-sorted .sort-icons .down {
+  color: var(--text-normal);
+  opacity: 0.35;
+  /* keep the non-active arrow dim */
+}
+
+table.dv-sortable th.is-sorted.asc .sort-icons .up {
+  opacity: 1;
+}
+
+table.dv-sortable th.is-sorted.desc .sort-icons .down {
+  opacity: 1;
+}
+
+/* Optional: keyboard focus ring */
+table.dv-sortable th:focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 2px;
+}
+```
