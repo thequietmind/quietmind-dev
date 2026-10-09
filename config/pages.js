@@ -5,6 +5,7 @@ import { lazy } from "react";
 const HomeMDX = lazy(() => import("@pages/home.mdx"));
 const BootstrapMDX = lazy(() => import("@pages/bootstrap.mdx"));
 const ZshCommands = lazy(() => import("@pages/zsh-commands.mdx"));
+const KeyboardShortcuts = lazy(() => import("@pages/keyboard-shortcuts.mdx"));
 const VSCodeConfiguration = lazy(() => import("@pages/vscode-configuration.mdx"));
 const ObsidianConfiguration = lazy(() => import("@pages/obsidian-configuration.mdx"));
 
@@ -46,5 +47,12 @@ export const pages = [
     component: ZshCommands,
     title: "Zsh Commands & Shell Aliases — Quiet Mind Creative",
     description: "Reference for Zsh commands and shell aliases included in the Quiet Mind macOS bootstrap configuration.",
+  },
+    {
+    name: "Keyboard Shortcuts",
+    route: "/keyboard-shortcuts",
+    component: KeyboardShortcuts,
+    title: "Dotfiles Keyboard Shortcuts — Quiet Mind Creative",
+    description: "Reference for keyboard shortcuts included in the Quiet Mind macOS dotfiles configuration.",
   },
 ];
