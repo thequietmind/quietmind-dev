@@ -44,38 +44,135 @@ fd --type f --hidden --no-ignore | fzf | xargs open
 
 `zoxide` is a smarter cd command. It remembers which directories you use most frequently, so you can "jump" to them in just a few keystrokes.
 
-- `z <directory>`
-- `zi` (use `control-c` to quit)
+Use `z <directory>` to quickly change to a directory
+
+```sh
+z
+```
+
+Use `z` in interactive mode (`control-c` to quit)
+
+```sh
+zi
+```
 
 ## Aliases and Custom Functions
 
 ### General
 
-- `search`: recursively search current directory, select a match with fuzzy search, and open it in nvim
-- `livesearch`: recursively perform a live search on the current directory
-- `cl`: clear the terminal output
-- `cdc`: change to the home directory and clear the terminal output
-- `mkcd`: make a new directory and change into the newly created directory
-- `echopath`: print out the paths in $PATH each on a new line
-- `lc`: copy the most recently run command to the clipboard
+Recursively search current directory, select a match with fuzzy search, and open it in nvim
+
+```sh
+search
+```
+
+Recursively perform a live search on the current directory
+
+```sh
+livesearch
+```
+
+Clear the terminal output
+
+```sh
+cl
+```
+
+Change to the home directory and clear the terminal output
+
+```sh
+cdc
+```
+
+Make a new directory and change into the newly created directory
+
+```sh
+mkcd
+```
+
+Create an empty new file and if need create any directories in the path that don't already exist
+
+```sh
+mktouch
+```
+
+Print out the paths in `$PATH`, each on a new line
+
+```sh
+echopath
+```
+
+Copy the most recently run command to the clipboard
+
+```sh
+lc
+```
 
 ### Git
 
-- `pdev`: check out the `dev` branch and pull the latest changes from the remote
-- `pmain`: check out the `main` branch and pull the latest changes from the remote
-- `brclear`: nuke all local branches except current, master, main, dev
-- `brsync`: delete local branches whose remote tracking branch no longer exists
-- `gco`: use fuzzy search to checkout a branch
-- `stash`: stash your current changes, including any untracked files
-- `logdiff`: show the full patch diff for every commit in the log
-- `gitstats`: shortcut to run `git-quick-stats`
-- `lg`: shortcut to run `lazygit`
+Check out the `dev` branch and pull the latest changes from the remote
+
+```sh
+pdev
+```
+
+Check out the `main` branch and pull the latest changes from the remote
+
+```sh
+pmain
+```
+
+Delete all local branches except current, master, main, dev
+
+```sh
+brclear
+```
+
+Delete local branches whose remote tracking branch no longer exists
+
+```sh
+brsync
+```
+
+Use fuzzy search to checkout a branch
+
+```sh
+gco
+```
+
+Stash your current changes, including any untracked files
+
+```sh
+stash
+```
+
+Show the full patch diff for every commit in the log
+
+```sh
+logdiff
+```
+
+Shortcut to run `git-quick-stats`
+
+```sh
+gitstats
+```
+
+Shortcut to run `lazygit`
+
+```sh
+lg
+```
 
 #### Sync Repo
 
-The `syncrepo` command runs `git pull`, `git add`, `git commit`, and `git push`.
+The `syncrepo` command runs `git pull`, `git add`, `git commit`, and `git push`, with a default commit message of "updates" if none is provided. This is meant for private repositories where you don't really care to add verbose commit messages. You can also provide it with a commit message afterwards.
 
-The command uses `cfg` (my dotfiles bare repo git command) instead of `git` when run in the home directory.
+```sh
+syncrepo
+```
+
+> The `syncrepo` command uses `cfg` (my dotfiles bare repo git command) instead of `git` when run in the home directory.
 
 ### Developer Tools
 
