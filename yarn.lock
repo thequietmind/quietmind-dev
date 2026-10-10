@@ -363,9 +363,9 @@
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
 "@quietmind/mdx-docs@1.x":
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/@quietmind/mdx-docs/-/mdx-docs-1.8.2.tgz#b3459e464a8a4736c829dba1148fd89c905f5604"
-  integrity sha512-zS4DS7VZUHLQvcmFC3CsdrmR0g+kq2lxG8z7dqwYExy73PtvmjJdkYY2kjoED60Zpz7R2DGha4quYel8kD+F6Q==
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@quietmind/mdx-docs/-/mdx-docs-1.9.1.tgz#48c9f8246f879a438ed0edaaa3364d9380f2b71d"
+  integrity sha512-8EowkYrKg4KhbB5YVUaoh95QNxu8GDvSze+bXVTRodEBUG4JOClg8/SBtoSXDndzNifhUXZxAUl/gvS40gVZDg==
   dependencies:
     remark-frontmatter "^5.0.0"
     remark-gfm "^4.0.1"
