@@ -28,6 +28,13 @@ export const pages = [
     description: "Automated macOS developer setup: Homebrew, dotfiles, dev tools, and system configuration in one bootstrap script.",
   },
   {
+    name: "Zsh Commands",
+    route: "/zsh-commands",
+    component: ZshCommands,
+    title: "Zsh Commands & Shell Aliases — Quiet Mind Creative",
+    description: "Reference for Zsh commands and shell aliases included in the Quiet Mind macOS bootstrap configuration.",
+  },
+  {
     name: "VS Code Configuration",
     route: "/vscode-configuration",
     component: VSCodeConfiguration,
@@ -35,24 +42,17 @@ export const pages = [
     description: "Complete VS Code settings, keybindings, extensions, and font configuration for a productive development environment.",
   },
   {
-    name: "Obsidian Configuration",
-    route: "/obsidian-configuration",
-    component: ObsidianConfiguration,
-    title: "Obsidian Configuration & Vault Setup — Quiet Mind Creative",
-    description: "Obsidian vault setup, plugin configuration, and personal knowledge management workflow.",
-  },
-  {
-    name: "Zsh Commands",
-    route: "/zsh-commands",
-    component: ZshCommands,
-    title: "Zsh Commands & Shell Aliases — Quiet Mind Creative",
-    description: "Reference for Zsh commands and shell aliases included in the Quiet Mind macOS bootstrap configuration.",
-  },
-    {
     name: "Keyboard Shortcuts",
     route: "/keyboard-shortcuts",
     component: KeyboardShortcuts,
     title: "Dotfiles Keyboard Shortcuts — Quiet Mind Creative",
     description: "Reference for keyboard shortcuts included in the Quiet Mind macOS dotfiles configuration.",
+  },
+  {
+    name: "Obsidian Configuration",
+    route: "/obsidian-configuration",
+    component: ObsidianConfiguration,
+    title: "Obsidian Configuration & Vault Setup — Quiet Mind Creative",
+    description: "Obsidian vault setup, plugin configuration, and personal knowledge management workflow.",
   },
 ];
