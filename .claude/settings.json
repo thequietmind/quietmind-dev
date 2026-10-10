@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(crit comment *)",
+      "Bash(yarn build *)",
+      "Bash(yarn preview *)",
+      "Bash(yarn test *)",
+      "Bash(curl -s http://localhost:4173)"
+    ]
+  }
+}

@@ -1,0 +1,241 @@
+# Zsh Commands
+
+> The following is a guide to the commands and aliases available after configuring your system with the [Quiet Mind macOS Bootstrap](/bootstrap).
+
+## Fuzzy Finder
+
+`fzf` is an interactive filter program for any kind of list; files, command history, processes, hostnames, bookmarks, git commits, etc. It implements a "fuzzy" matching algorithm, so you can quickly type in patterns with omitted characters and still get the results you want.
+
+Tto quit interactive modes you can use any of the following keyboard shortcuts:
+
+- <kbd>Escape</kbd>
+- <kbd>CTRL</kbd> + <kbd>C</kbd>
+- <kbd>CTRL</kbd> + <kbd>Q</kbd>
+
+### Built-in Shell Integrations
+
+- <kbd>CTRL</kbd> + <kbd>R</kbd>: fuzzy search shell history
+- <kbd>CTRL</kbd> + <kbd>T</kbd>: fuzzy-insert a file path into the current command
+- <kbd>OPTION</kbd> + <kbd>C</kbd>: fuzzy `cd` into a subdirectory
+
+> Note: To enable <kbd>OPTION</kbd> + <kbd>C</kbd> you'll need to set "Left option key" to "ESC+" under `Settings > Profiles > Keys` in iTerm.
+
+### Usage
+
+Pipe the contents of a file to perform a fuzzy search of its contents:
+
+```sh
+cat readme.md | fzf
+```
+
+Show a file browser with file content previews to the right side of the terminal:
+
+```sh
+fzf --style full --preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}'
+```
+
+You can pipe the output from other commands to `fzf` as needed.
+
+```sh
+fd --type f --hidden --no-ignore | fzf | xargs open
+```
+
+## Zoxide
+
+`zoxide` is a smarter cd command. It remembers which directories you use most frequently, so you can "jump" to them in just a few keystrokes.
+
+Use `z <directory>` to quickly change to a directory
+
+```sh
+z
+```
+
+Use `z` in interactive mode (`control-c` to quit)
+
+```sh
+zi
+```
+
+## Aliases and Custom Functions
+
+### General
+
+Recursively search current directory, select a match with fuzzy search, and open it in nvim
+
+```sh
+search
+```
+
+Recursively perform a live search on the current directory
+
+```sh
+livesearch
+```
+
+Clear the terminal output
+
+```sh
+cl
+```
+
+Change to the home directory and clear the terminal output
+
+```sh
+cdc
+```
+
+Make a new directory and change into the newly created directory
+
+```sh
+mkcd
+```
+
+Create an empty new file and if need create any directories in the path that don't already exist
+
+```sh
+mktouch
+```
+
+Print out the paths in `$PATH`, each on a new line
+
+```sh
+echopath
+```
+
+Copy the most recently run command to the clipboard
+
+```sh
+lc
+```
+
+### Git
+
+Check out the `dev` branch and pull the latest changes from the remote
+
+```sh
+pdev
+```
+
+Check out the `main` branch and pull the latest changes from the remote
+
+```sh
+pmain
+```
+
+Delete all local branches except current, master, main, dev
+
+```sh
+brclear
+```
+
+Delete local branches whose remote tracking branch no longer exists
+
+```sh
+brsync
+```
+
+Use fuzzy search to checkout a branch
+
+```sh
+gco
+```
+
+Stash your current changes, including any untracked files
+
+```sh
+stash
+```
+
+Show the full patch diff for every commit in the log
+
+```sh
+logdiff
+```
+
+Shortcut to run `git-quick-stats`
+
+```sh
+gitstats
+```
+
+Shortcut to run `lazygit`
+
+```sh
+lg
+```
+
+#### Sync Repo
+
+The `syncrepo` command runs `git pull`, `git add`, `git commit`, and `git push`, with a default commit message of "updates" if none is provided. This is meant for private repositories where you don't really care to add verbose commit messages. You can also provide it with a commit message afterwards.
+
+```sh
+syncrepo
+```
+
+> The `syncrepo` command uses `cfg` (my dotfiles bare repo git command) instead of `git` when run in the home directory.
+
+### Developer Tools
+
+To use `jq` you can use the command `json
+
+```sh
+json
+```
+
+To use `yq` you can use the command `yaml`
+
+```sh
+yq
+```
+
+### Network
+
+Flush the DNS cache and restart the DNS responder service
+
+```sh
+flushdns
+```
+
+Show the local IP address
+
+```sh
+localip
+```
+
+### Zsh
+
+Reload zsh
+
+```sh
+reload
+```
+
+Benchmark zsh startup time
+
+```sh
+timezsh
+```
+
+### Add default flags to system commands
+
+- `df`: becomes `df -h` which outputs file system space usage in human-readable sizes in the power of 1024 (e.g. 1023M)
+- `du`: becomes `du -ch` which outputs a total disk usage in human-readable sizes in the power of 1024 (e.g. 1023M)
+- `grep`: becomes `grep --color=auto` which colorizes the output when stdout is a TTY
+- `fgrep`: becomes `fgrep --color=auto` which colorizes the output when stdout is a TTY
+- `egrep`: becomes `egrep --color=auto` which colorizes the output when stdout is a TTY
+- `diff`: becomes `diff --color=auto` which colorizes the output when stdout is a TTY
+- `rg`: becomes `rg --smart-case` which matches case-insensitively unless the pattern contains an uppercase letter, in which case it matches case-sensitively
+
+### Phoenix Window Manager
+
+Change to the `~/.config/phoenix/` directory
+
+```sh
+cdphoenix
+```
+
+Change to the `~/.config/phoenix/` directory and tail the log file
+
+```sh
+logphoenix
+```
