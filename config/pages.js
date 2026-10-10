@@ -35,18 +35,18 @@ export const pages = [
     description: "Reference for Zsh commands and shell aliases included in the Quiet Mind macOS bootstrap configuration.",
   },
   {
-    name: "VS Code Configuration",
-    route: "/vscode-configuration",
-    component: VSCodeConfiguration,
-    title: "VS Code Configuration & Settings — Quiet Mind Creative",
-    description: "Complete VS Code settings, keybindings, extensions, and font configuration for a productive development environment.",
-  },
-  {
     name: "Keyboard Shortcuts",
     route: "/keyboard-shortcuts",
     component: KeyboardShortcuts,
     title: "Dotfiles Keyboard Shortcuts — Quiet Mind Creative",
     description: "Reference for keyboard shortcuts included in the Quiet Mind macOS dotfiles configuration.",
+  },
+  {
+    name: "VS Code Configuration",
+    route: "/vscode-configuration",
+    component: VSCodeConfiguration,
+    title: "VS Code Configuration & Settings — Quiet Mind Creative",
+    description: "Complete VS Code settings, keybindings, extensions, and font configuration for a productive development environment.",
   },
   {
     name: "Obsidian Configuration",
