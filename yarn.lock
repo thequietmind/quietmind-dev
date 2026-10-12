@@ -367,10 +367,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@quietmind/mdx-docs@2.x":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@quietmind/mdx-docs/-/mdx-docs-2.0.0.tgz#4f7eb26cb3bb12a93fe435373217d3ae9754aa8d"
-  integrity sha512-PzlFAVTThhHaL+s7+BB83uD9OKXjqoGDznNhm45ZN4lnToNQP1MTyBRXuxYKbTjuLfE+8xeC3TpFFkWwnOVUQg==
+"@quietmind/mdx-docs@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@quietmind/mdx-docs/-/mdx-docs-2.0.1.tgz#79c2a83011837abcce627de7ab0bb5cf8e792fdb"
+  integrity sha512-41ff5uNGqkNctHd2U6b3qfBnIDFs7sjP23VeA458wIapknvCLbwPueJ6m7hqa2OTcaZqNqg23KKApGzRAPWNXQ==
   dependencies:
     remark-frontmatter "^5.0.0"
     remark-gfm "^4.0.1"
