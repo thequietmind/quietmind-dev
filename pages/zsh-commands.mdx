@@ -96,6 +96,12 @@ Create an empty new file and if need create any directories in the path that don
 mktouch
 ```
 
+Delete every file except the specified file
+
+```sh
+keeponly filename.txt
+```
+
 Print out the paths in `$PATH`, each on a new line
 
 ```sh
@@ -146,6 +152,12 @@ Stash your current changes, including any untracked files
 stash
 ```
 
+Run `git pull` in each sub-directory if the repo is clean
+
+```sh
+pullall
+```
+
 Show the full patch diff for every commit in the log
 
 ```sh
@@ -173,6 +185,20 @@ syncrepo
 ```
 
 > The `syncrepo` command uses `cfg` (my dotfiles bare repo git command) instead of `git` when run in the home directory.
+
+### Homebrew
+
+Check for available updates
+
+```sh
+brewup update
+```
+
+Check and optionally upgrade packages
+
+```sh
+brewup upgrade
+```
 
 ### Developer Tools
 
