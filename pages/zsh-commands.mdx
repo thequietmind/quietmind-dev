@@ -60,10 +60,10 @@ zi
 
 ### General
 
-Recursively search current directory, select a match with fuzzy search, and open it in nvim
+Recursively search current directory, select a match with fuzzy search, and open it in `nvim` (ctrl-c to quit)
 
 ```sh
-search
+search <search term>
 ```
 
 Recursively perform a live search on the current directory
@@ -87,19 +87,19 @@ cdc
 Make a new directory and change into the newly created directory
 
 ```sh
-mkcd
+mkcd <directory>
 ```
 
 Create an empty new file and if need create any directories in the path that don't already exist
 
 ```sh
-mktouch
+mktouch <filename>
 ```
 
 Delete every file except the specified file
 
 ```sh
-keeponly filename.txt
+keeponly <filename>
 ```
 
 Print out the paths in `$PATH`, each on a new line
@@ -140,7 +140,7 @@ Delete local branches whose remote tracking branch no longer exists
 brsync
 ```
 
-Use fuzzy search to checkout a branch
+Use fuzzy search to checkout a branch (ctrl-c to quit)
 
 ```sh
 gco
@@ -170,7 +170,7 @@ Shortcut to run `git-quick-stats`
 gitstats
 ```
 
-Shortcut to run `lazygit`
+Shortcut to run `lazygit` (crtl-c to quit)
 
 ```sh
 lg
@@ -211,7 +211,7 @@ json
 To use `yq` you can use the command `yaml`
 
 ```sh
-yq
+yaml
 ```
 
 ### Network
@@ -230,7 +230,7 @@ localip
 
 ### Zsh
 
-Reload zsh
+Reload zsh configuration
 
 ```sh
 reload
