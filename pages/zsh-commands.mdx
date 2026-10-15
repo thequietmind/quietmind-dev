@@ -176,6 +176,28 @@ Shortcut to run `lazygit` (crtl-c to quit)
 lg
 ```
 
+### Caffeinate
+
+The `awake` command is an alias to use `caffeinate` to prevent idle sleeping (allow the displays to turn off, but keep the computer awake).
+
+Prevent idle for 4 hours
+
+```sh
+awake 4h
+```
+
+Prevent idle until 4am
+
+```sh
+awake 4am
+```
+
+Prevent idle until a command completes
+
+```sh
+awake <command>
+```
+
 #### Sync Repo
 
 The `syncrepo` command runs `git pull`, `git add`, `git commit`, and `git push`, with a default commit message of "updates" if none is provided. This is meant for private repositories where you don't really care to add verbose commit messages. You can also provide it with a commit message afterwards.
