@@ -34,13 +34,27 @@
     </script>
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Q94FJXGYM"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      (function () {
+        var host = location.hostname;
+        if (host !== 'quietmind.dev' && host !== 'www.quietmind.dev') return;
 
-      gtag('config', 'G-9Q94FJXGYM');
+        try {
+          if (localStorage.getItem('__analytics_ignore') === 'true') return;
+        } catch (e) {}
+
+        var tag = document.createElement('script');
+        tag.async = true;
+        tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-9Q94FJXGYM';
+        document.head.appendChild(tag);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){window.dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+
+        gtag('config', 'G-9Q94FJXGYM');
+      })();
     </script>
   </head>
   <body>
