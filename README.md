@@ -20,7 +20,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 To update `@quietmind/mdx-docs`:
 
 ```sh
-yarn up @quietmind/mdx-docs@latest
+yarn upgrade @quietmind/mdx-docs@latest
 ```
 
 ## Scripts
